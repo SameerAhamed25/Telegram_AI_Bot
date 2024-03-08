@@ -1,1 +1,31 @@
 # Telegram_bot
+
+This is a chatbot created using Python, Haystack, pydub, and the Hugging Face model mistralai/Mistral-7B-Instruct-v0.2. It supports text and voice messages, allowing users to interact with the chatbot in their preferred format.
+
+Features
+Text Conversations with Mistral-7B-Instruct-v0.2 model
+Voice message Processing using Google Speech Recognition
+Chat Conversation tracking
+Prerequisites
+Hugging Face Token
+Telegram Bot Token
+Installation
+Clone the repository:
+git clone https://github.com/renuka010/Mistral-Telegram-Bot.git
+Change into the project directory:
+cd Mistral-Telegram-Bot
+Create and Activate the virtual environment:
+python3 -m venv venv  # Create
+venv\Scripts\activate    # Activate
+Install the dependencies:
+pip install -r requirements.txt
+Create a .env file with your Huggingface token and Telegram token:
+HF_API_TOKEN=your_huggingface_token
+TELEGRAM_BOT_TOKEN=your_telegram_token
+Run the server:
+python chatbot.py
+Future Scope
+Creating vector-based memory for storing conversation history. (Currently, the project supports only inbuilt memory which can remember only the last 10 conversations from history.)
+
+Contributing
+Contributions are welcome! If you'd like to contribute, please submit a pull request or open an issue with your proposed changes or bug reports.
