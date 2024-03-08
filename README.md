@@ -28,7 +28,7 @@ This is a chatbot created using Python, Haystack, pydub, and the Hugging Face mo
     python3 -m venv venv  # Create
     venv\Scripts\activate    # Activate
     ```
-4. Install the dependencies:
+4. Install the dependencies in the virtual environment:
     ```bash
     pip install -r requirements.txt
     ```
