@@ -68,3 +68,7 @@ To use the Mistral Telegram Bot, follow these steps:
 
 
 This bot is created on the basis of -> https://github.com/renuka010/Mistral-Telegram-Bot.git, basicaly this an updated and more effective version.
+For this to work we need to install and import more packages other than that mentioned in the requirements.txt!
+
+Check Out Notion Notes For More Details:
+https://www.notion.so/Telegram-AI-Bot-Sam-57802ddc637147008e1fb0d6bd7a8bbd?pvs=4
