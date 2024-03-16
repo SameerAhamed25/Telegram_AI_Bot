@@ -162,6 +162,8 @@ def generate_image_caption(image_path):
     except Exception as e:
         print("Error generating image caption:", e)
         return None
+        
+## [image input method is not working as intented.]
 
 # Define a new command to retrieve group message history
 @bot.message_handler(commands=["history"])
