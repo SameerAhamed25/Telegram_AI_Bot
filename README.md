@@ -1,12 +1,7 @@
 ## Overview
 
 This is a chatbot created using Python, Haystack, pydub, and the Hugging Face model `mistralai/Mistral-7B-Instruct-v0.2`. It supports text and voice messages, allowing users to interact with the chatbot in their preferred format.
-
-## Features
-
-- Text Conversations with `Mistral-7B-Instruct-v0.2` model
-- Voice message Processing using Google Speech Recognition
-- Chat Conversation tracking
+The Sania Telegram Bot is a conversational AI bot built using Python and the Telegram Bot API. It allows users to interact with the Mistral model to get responses to their messages, including text, voice.
 
 ## Prerequisites
 
@@ -42,10 +37,29 @@ This is a chatbot created using Python, Haystack, pydub, and the Hugging Face mo
     python chatbot.py
     ```
 
-## Future Scope
+## Features
 
-Creating vector-based memory for storing conversation history. (Currently, the project supports only inbuilt memory which can remember only the last 10 conversations from history.)
+- **Text Input**: Users can send text messages to the bot to initiate a conversation or ask questions. The Bot excels in maintaining continuity within conversations, seamlessly remembering previous interactions within the same session to provide users with a personalized and coherent experience.
+- **Voice Input**: Users can send voice messages to the bot, which will be transcribed to text for processing.
 
-## Contributing
+## Inputs
 
-Contributions are welcome! If you'd like to contribute, please submit a pull request or open an issue with your proposed changes or bug reports.
+The Bot accepts the following inputs:
+
+1. **Text Messages**: Users can send text messages containing their queries or messages.
+2. **Voice Messages**: Users can send voice messages containing their queries or messages.
+
+## Outputs
+
+The Bot provides the following outputs:
+
+1. **Text Responses**: The bot responds to user messages with text-based replies.
+2. **Voice Responses**: The bot may provide voice responses for voice inputs or text inputs, allowing for a conversational experience.
+
+## Usage
+
+To use the Mistral Telegram Bot, follow these steps:
+
+1. **Start the Bot**: Start a conversation with the bot by searching for it on Telegram and sending a message.
+2. **Send Messages**: Send text messages, voice messages to the bot to initiate conversations or ask questions.
+3. **Receive Responses**: The bot will respond to your messages with relevant information or responses.
