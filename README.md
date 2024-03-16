@@ -3,6 +3,8 @@
 This is a chatbot created using Python, Haystack, pydub, and the Hugging Face model `mistralai/Mistral-7B-Instruct-v0.2`. It supports text and voice messages, allowing users to interact with the chatbot in their preferred format.
 The Sania Telegram Bot is a conversational AI bot built using Python and the Telegram Bot API. It allows users to interact with the Mistral model to get responses to their messages, including text, voice.
 
+# Unlinke Other Bots this Bot can Remember the conversations within the sessions. We can change how many conversations it can save in the code.
+
 ## Prerequisites
 
 - Hugging Face Token
