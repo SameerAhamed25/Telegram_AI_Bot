@@ -29,6 +29,7 @@ The **Sania Telegram Bot** is a conversational AI bot built using Python and the
 4. Install the dependencies in the virtual environment:
     ```bash
     pip install -r requirements.txt
+    ' and others specified in the notion doc.'
     ```
 5. Create a `.env` file with your Huggingface token and Telegram token:
     ```
