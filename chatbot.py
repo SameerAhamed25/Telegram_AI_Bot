@@ -2,18 +2,16 @@ from dotenv import load_dotenv
 import os
 import telebot
 import requests
-from transformers import BlipProcessor, BlipForConditionalGeneration
-from PIL import Image
-from telebot import types
 from collections import deque
 import threading
-
+import schedule
+import time
+import signal
+import sys
 import speech_recognition as sr
 from pydub import AudioSegment
-
 from haystack.components.generators.chat import HuggingFaceTGIChatGenerator
 from haystack.dataclasses import ChatMessage
-from pydub import AudioSegment
 from moviepy.editor import AudioFileClip
 
 # Set the path to FFmpeg and FFprobe manually
@@ -24,14 +22,17 @@ AudioSegment.converter = ffmpeg_path
 AudioSegment.ffmpeg = ffmpeg_path
 AudioSegment.ffprobe = ffprobe_path
 
-# Last 10 chat conversations
-msg = []
-
 # Load environment variables from .env file
-load_dotenv()
+dotenv_path = r"C:\Users\mdsng\Mistral-Telegram-Bot\venv\.env.txt"
+load_dotenv(dotenv_path)
+
+# Test if the variables are loaded
+telegram_bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+hf_api_token = os.getenv("HF_API_TOKEN")
+print("Telegram:", telegram_bot_token, " Hugging Face:", hf_api_token)
 
 # Set Hugging Face API token
-os.environ["HF_API_TOKEN"] = os.getenv("HF_API_TOKEN")
+os.environ["HF_API_TOKEN"] = hf_api_token
 
 # Initialize Hugging Face Chat Generator
 generator = HuggingFaceTGIChatGenerator(
@@ -42,8 +43,10 @@ generator = HuggingFaceTGIChatGenerator(
 generator.warm_up()
 
 # Initialize Telegram Bot
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(telegram_bot_token)
+
+# Last 10 chat conversations
+msg = deque(maxlen=20)
 
 # Function to retrieve group message history
 def get_group_message_history(chat_id, limit=100):
@@ -71,25 +74,25 @@ MAX_CHAT_HISTORY = 20
 
 # Shared chat history deque
 msg = deque(maxlen=MAX_CHAT_HISTORY)
-
+        
 # Function to handle text messages
 @bot.message_handler(func=lambda message: message.text)
 def handle_text(message):
+    # Print the chat ID
+    print("Chat ID:", message.chat.id)
     with lock:
         msg.append(ChatMessage.from_user(message.text))
         response = generator.run(messages=list(msg))  # Pass stored chat history to the generator
         msg.append(response["replies"][0])
         bot.reply_to(message, response["replies"][0].content)
-        
+
 # Function to handle voice messages
 @bot.message_handler(content_types=["voice"])
 def handle_voice(message):
-    print("Handling voice message...")
-
     # Download voice message
     voice_file = bot.get_file(message.voice.file_id)
     file = requests.get(
-        "https://api.telegram.org/file/bot{0}/{1}".format(TOKEN, voice_file.file_path)
+        "https://api.telegram.org/file/bot{0}/{1}".format(telegram_bot_token, voice_file.file_path)
     )
     with open("audio.ogg", "wb") as f:
         f.write(file.content)
@@ -98,15 +101,11 @@ def handle_voice(message):
     sound = AudioFileClip("audio.ogg")
     sound.write_audiofile("audio.wav")
 
-    print("Voice message converted to .wav")
-
-    # Convert voice meassage to text message
+    # Convert voice message to text message
     recognizer = sr.Recognizer()
     with sr.AudioFile("audio.wav") as source:
         audio_file = recognizer.record(source)
         query = recognizer.recognize_google(audio_file)
-
-    print(f"Converted voice message to text: {query}")
 
     # Get response from Mistral bot
     msg.append(ChatMessage.from_user(query))
@@ -119,51 +118,6 @@ def handle_voice(message):
     if len(msg) > 20:
         msg.pop(0)
         msg.pop(0)
-
-# Function to handle image messages
-@bot.message_handler(content_types=["photo"])
-def handle_image(message):
-    print("Handling image message...")
-
-    # Download image
-    image_file = bot.get_file(message.photo[-1].file_id)
-    image_path = os.path.join("images", f"{message.message_id}.jpg")
-    image_path = "image.jpg"
-    file_info = bot.get_file(message.photo[len(message.photo) - 1].file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    with open(image_path, 'wb') as new_file:
-        new_file.write(downloaded_file)
-
-    # Get caption from the image
-    image_caption = generate_image_caption(image_path)
-
-    # Reply with the image caption
-    bot.reply_to(message, image_caption)
-
-    # Optionally, you can remove the downloaded image
-    os.remove(image_path)
-
-# Function to generate image caption
-def generate_image_caption(image_path):
-    print("Generating image caption...")
-
-    # Open the image using PIL
-    image = Image.open(image_path)
-
-    # Ensure the image is in RGB mode
-    if image.mode != "RGB":
-        image = image.convert("RGB")
-
-    try:
-        # Process the image
-        image_caption = BlipProcessor(images=image, return_tensors="pt")
-        print("Image caption generated successfully.")
-        return image_caption
-    except Exception as e:
-        print("Error generating image caption:", e)
-        return None
-        
-## [image input method is not working as intented.]
 
 # Define a new command to retrieve group message history
 @bot.message_handler(commands=["history"])
@@ -186,8 +140,39 @@ def get_group_history(message):
         # Reply to the user if no history is available
         bot.reply_to(message, "No message history available for this group.")
 
+# Function to send a timed message
+def send_timed_message():
+    # Replace 'RECIPIENT_ID' with the Telegram ID of the recipient
+    recipient_id = '7133305371'
+    # Replace 'YOUR_MESSAGE' with the message you want to send
+    message = 'This is a timed message from sam !!!'
+    # Send the message using your bot
+    bot.send_message(recipient_id, message)
+
+# Schedule the timed message to be sent daily at a specific time
+schedule.every().day.at("21:53").do(send_timed_message)
+
+# Function to start the scheduler
+def start_scheduler():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Start the scheduler in a separate thread
+scheduler_thread = threading.Thread(target=start_scheduler)
+scheduler_thread.start()
+
+# Function to handle KeyboardInterrupt
+def signal_handler(signal, frame):
+    print("Bot stopped by user.")
+    bot.stop_polling()
+    sys.exit(0)
+
+# Register the signal handler
+signal.signal(signal.SIGINT, signal_handler)
+
 # Start the bot
 if __name__ == "__main__":
     print("Bot is running...")
-    print("Press Ctrl + C to stop bot")
+    print("Press Ctrl + C to stop bot! ><")
     bot.polling()
