@@ -45,6 +45,7 @@ The **Sania Telegram Bot** is a conversational AI bot built using Python and the
 
 - **Text Input**: Users can send text messages to the bot to initiate a conversation or ask questions. The Bot excels in maintaining continuity within conversations, seamlessly remembering previous interactions within the same session to provide users with a personalized and coherent experience.
 - **Voice Input**: Users can send voice messages to the bot, which will be transcribed to text for processing.
+- **Timed Messages**: The bot also has the ability to send timed messages to users. This can be set up to provide periodic reminders or updates, enhancing the interaction experience.
 
 ## Inputs
 
