@@ -175,4 +175,5 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == "__main__":
     print("Bot is running...")
     print("Press Ctrl + C to stop bot! ><")
-    bot.polling()
+    bot.polling(timeout=3600)  # Increase timeout to 1 hour (3600 seconds)
+
